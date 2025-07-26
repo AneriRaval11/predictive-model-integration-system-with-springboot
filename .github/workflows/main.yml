@@ -30,7 +30,7 @@ jobs:
           ${{ runner.os }}-pip-
 
     - name: Install Dependencies
-      run: pip install -r requirements.txt
+      run: pip install -r python_ml/requirements.txt
 
     - name: Test API (optional)
       run: echo "Write your unit tests here if any"

@@ -1,0 +1,12 @@
+services:
+  java_backend:
+    build: ./java_backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - python_ml
+
+  python_ml:
+    build: ./python_ml
+    ports:
+      - "8000:8000"

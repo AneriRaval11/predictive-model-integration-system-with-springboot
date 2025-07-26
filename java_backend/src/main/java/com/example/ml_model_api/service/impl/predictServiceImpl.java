@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class predictServiceImpl implements predictService {
-    public final String PYTHON_API = "https://9081cad788ef.ngrok-free.app/predict";
+    public final String PYTHON_API = "http://python_ml:8000/predict";
 
     @Override
     public predictResponseDTO getPrediction(predictRequestDTO request) {

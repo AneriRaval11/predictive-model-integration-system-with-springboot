@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+//service class
 @Service
 public class predictServiceImpl implements predictService {
     public final String PYTHON_API = "http://python_ml:8000/predict";

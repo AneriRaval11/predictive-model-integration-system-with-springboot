@@ -43,10 +43,10 @@ jobs:
 
     - name: Build and Push Python ML Image
       run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi_ml:latest ./python_ml
-          docker push ${{ secrets.DOCKER_USERNAME }}/fastapi_ml:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi_ml:python ./python_ml
+          docker push ${{ secrets.DOCKER_USERNAME }}/fastapi_ml:python
 
     - name: Build and Push Java Backend Image
       run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi_ml:latest ./java_backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/fastapi_ml:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi_ml:java ./java_backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/fastapi_ml:java

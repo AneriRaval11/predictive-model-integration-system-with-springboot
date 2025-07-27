@@ -3,6 +3,7 @@
 This project demonstrates a containerized microservice architecture that integrates **Java Spring Boot** and **Python FastAPI** for delivering machine learning predictions. The system is fully automated with **GitHub Actions CI/CD**, pushing Docker images to DockerHub.
 
 ---
+<img width="3840" height="2471" alt="Untitled diagram _ Mermaid Chart-2025-07-27-095204" src="https://github.com/user-attachments/assets/66b01c64-d09e-4d2a-b994-aa57ee024ebf" />
 
 ## 🧠 Tech Stack
 
@@ -31,7 +32,7 @@ This project demonstrates a containerized microservice architecture that integra
 │   └── Dockerfile
 ├── docker-compose.yml         # To run both services together
 ├── .github/workflows/         # CI/CD GitHub Actions config
-│   └── deploy.yml
+│   └── main.yml
 └── README.md
 ```
 

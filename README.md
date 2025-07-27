@@ -1,47 +1,57 @@
-﻿# predictive-model-integration-system-with-springboot
- 
-This project demonstrates a microservice architecture that integrates **Spring Boot** and **FastAPI** to deliver machine learning predictions. A logistic regression model predicts whether a user is likely to purchase a product based on their age and estimated salary.
+# Predictive Model Integration System with Spring Boot & FastAPI
+
+This project demonstrates a containerized microservice architecture that integrates **Java Spring Boot** and **Python FastAPI** for delivering machine learning predictions. The system is fully automated with **GitHub Actions CI/CD**, pushing Docker images to DockerHub.
 
 ---
 
 ## 🧠 Tech Stack
 
-- **Spring Boot** – Handles API request routing and integrates with external services
-- **FastAPI** – Serves the trained ML model via a lightweight Python API
-- **Logistic Regression (Scikit-learn)** – Trained model for binary classification
+- **Java Spring Boot** – REST API backend to interact with users and forward data to the ML model
+- **Python FastAPI** – Serves the trained machine learning model via an API
+- **Scikit-learn (Logistic Regression)** – Used for binary classification
+- **Docker & Docker Compose** – Containerizes both services for easy deployment
+- **GitHub Actions** – Automates build and deployment pipelines
+- **Swagger UI** – For API documentation and testing
 - **Joblib** – For model serialization
-- **Postman** – For API testing
 
 ---
 
-## 📌 Project Structure
+## 📁 Project Structure
 
 ```
-├── springboot-api/
-│   ├── controller/
-│   ├── service/
-│   └── dto/
-├── fastapi-ml.ipynb
+.
+├── python-api/                 # FastAPI ML service
+│   ├── main.py
+│   ├── model.pkl
+│   ├── requirements.txt
+│   └── Dockerfile
+├── springboot-api/            # Java Spring Boot service
+│   ├── src/
+│   ├── mvnw
+│   └── Dockerfile
+├── docker-compose.yml         # To run both services together
+├── .github/workflows/         # CI/CD GitHub Actions config
+│   └── deploy.yml
 └── README.md
 ```
 
 ---
 
-## 🔧 How It Works
+## ⚙️ How It Works
 
-1. **Client** sends POST request to Spring Boot API.
-2. **Spring Boot** forwards the relevant user data to FastAPI.
-3. **FastAPI** processes the data and returns a prediction.
-4. **Spring Boot** interprets the result and returns a user-friendly message.
+1. **Client** sends a POST request to the Spring Boot API with user input.
+2. **Spring Boot** forwards the input (age and salary) to the FastAPI ML service.
+3. **FastAPI** loads the logistic regression model and returns the prediction (0 or 1).
+4. **Spring Boot** wraps and returns the result to the client in a clean response format.
 
 ---
 
-## 🔁 Sample Postman Request & Response
+## 🔁 Sample API Interaction
 
 ### Spring Boot Endpoint
-**POST** `http://<your-ngrok-url>/api/predict`
+**POST** `/api/predict`
 
-#### ✅ Request Body
+#### Request Body
 ```json
 {
   "age": 30,
@@ -49,19 +59,17 @@ This project demonstrates a microservice architecture that integrates **Spring B
 }
 ```
 
-#### ✅ Response
+#### Response
 ```json
 {
-    "prediction": 1
+  "prediction": 1
 }
 ```
 
----
+### FastAPI Endpoint (Internal)
+**POST** `/predict`
 
-### FastAPI Internal Endpoint
-**POST** `http://<your-ngrok-url>/predict`
-
-#### Request Sent by Spring Boot
+#### Forwarded Request
 ```json
 {
   "age": 30,
@@ -69,7 +77,7 @@ This project demonstrates a microservice architecture that integrates **Spring B
 }
 ```
 
-#### Response from FastAPI
+#### Response
 ```json
 {
   "prediction": 1
@@ -78,65 +86,82 @@ This project demonstrates a microservice architecture that integrates **Spring B
 
 ---
 
-## 📦 Setup Instructions
+## 🐳 Dockerized Deployment
+
+### Build Images (Locally)
+```bash
+# From root directory
+docker-compose build
+```
+
+### Run Services
+```bash
+docker-compose up
+```
+
+- Java Backend: http://localhost:8080
+- FastAPI ML: http://localhost:8000/docs (Swagger UI)
+
+---
+
+## 🔄 CI/CD with GitHub Actions
+
+Every push to the `main` branch triggers a CI/CD pipeline:
+
+- Builds Docker images for both `python-api` and `springboot-api`.
+- Tags and pushes them to DockerHub:
+  - `aneri11/fastapi_ml/python`
+  - `aneri11/fastapi_ml/java`
+
+Make sure to configure the following GitHub repository secrets:
+
+| Secret Name       | Description                  |
+|-------------------|------------------------------|
+| `DOCKER_USERNAME` | Your DockerHub username      |
+| `DOCKER_PASSWORD` | Your DockerHub access token  |
+
+---
+
+## 🔖 Prediction Meaning
+
+- `prediction: 1` → User is likely to purchase
+- `prediction: 0` → User is unlikely to purchase
+
+---
+
+## ✅ API Testing with Swagger
+
+FastAPI includes auto-generated Swagger UI:
+
+```bash
+http://localhost:8000/docs
+```
+
+You can test predictions directly via the browser.
+
+---
+
+## 📦 Manual Setup (Optional)
 
 ### FastAPI
 ```bash
-pip install fastapi uvicorn joblib scikit-learn
+cd python-api
+pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
 ### Spring Boot
 ```bash
-./mvnw spring-boot:run
+cd springboot-api
+chmod +x mvnw
+./mvnw clean package -DskipTests
+java -jar target/*.jar
 ```
 
 ---
 
-### 🌐 Exposing FastAPI with Ngrok
+## 🐙 DockerHub Image Links
 
-To expose your local FastAPI server to the internet using **Ngrok**, follow these steps:
-
-#### 🔧 Install Ngrok Python Library
-
-```bash
-pip install pyngrok
-```
-
-#### 🔑 Authenticate Ngrok
-
-1. **Create an Ngrok account**: https://dashboard.ngrok.com/signup  
-2. **Get your Auth Token**: https://dashboard.ngrok.com/get-started/your-authtoken  
-3. **Add your Auth Token** (replace `YOUR_AUTHTOKEN_HERE` with your actual token):
-
-```bash
-ngrok config add-authtoken YOUR_AUTHTOKEN_HERE
-```
-
-Or in Python:
-
-```python
-from pyngrok import ngrok
-
-ngrok.set_auth_token("YOUR_AUTHTOKEN_HERE")
-```
-
-#### 🚀 Start Ngrok Tunnel in Python
-
-```python
-from pyngrok import ngrok
-
-# Start a tunnel on port 8000 (FastAPI default)
-public_url = ngrok.connect(8000)
-print("Public URL:", public_url)
-```
-
-Now, your FastAPI app running on `http://127.0.0.1:8000` will be accessible via the `public_url`.
-
-## 🚀 Prediction Meaning
-
-- `prediction: 1` → Likely to purchase
-- `prediction: 0` → Unlikely to purchase
-
----
+- [aneri11/fastapi_ml/java](https://hub.docker.com/r/aneri11/fastapi_ml/java)
+- [aneri11/fastapi_ml/python](https://hub.docker.com/r/aneri11/fastapi_ml/python)
 
